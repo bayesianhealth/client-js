@@ -139,21 +139,28 @@ function any(tasks) {
  */
 
 
-function getSecurityExtensions(env, baseUrl = "/") {
+function getSecurityExtensions(env, baseUrl = "/", disableWellKnownEndpoint = false) {
   const AbortController = env.getAbortController();
-  const abortController1 = new AbortController();
-  const abortController2 = new AbortController();
-  return any([{
-    controller: abortController1,
-    promise: getSecurityExtensionsFromWellKnownJson(baseUrl, {
-      signal: abortController1.signal
-    })
-  }, {
-    controller: abortController2,
+  let queries = [];
+
+  if (!disableWellKnownEndpoint) {
+    const wellKnownJSONAbortController = new AbortController();
+    queries.push({
+      controller: wellKnownJSONAbortController,
+      promise: getSecurityExtensionsFromWellKnownJson(baseUrl, {
+        signal: wellKnownJSONAbortController.signal
+      })
+    });
+  }
+
+  const conformanceStatementAbortController = new AbortController();
+  queries.push({
+    controller: conformanceStatementAbortController,
     promise: getSecurityExtensionsFromConformanceStatement(baseUrl, {
-      signal: abortController2.signal
+      signal: conformanceStatementAbortController.signal
     })
-  }]);
+  });
+  return any(queries);
 }
 
 exports.getSecurityExtensions = getSecurityExtensions;
@@ -189,7 +196,8 @@ async function authorize(env, params = {}, _noRedirect = false) {
     redirectUri,
     scope = "",
     clientId,
-    completeInTarget
+    completeInTarget,
+    disableWellKnownEndpoint
   } = params;
   const url = env.getUrl();
   const storage = env.getStorage(); // For these three an url param takes precedence over inline option
@@ -239,7 +247,7 @@ async function authorize(env, params = {}, _noRedirect = false) {
       completeInTarget = inFrame; // In this case we can't always make the best decision so ask devs
       // to be explicit in their configuration.
 
-      console.warn('Your app is being authorized from within an iframe or popup ' + 'window. Please be explicit and provide a "completeInTarget" ' + 'option. Use "true" to complete the authorization in the ' + 'same window, or "false" to try to complete it in the parent ' + 'or the opener window. See http://docs.smarthealthit.org/client-js/api.html');
+      console.warn("Your app is being authorized from within an iframe or popup " + 'window. Please be explicit and provide a "completeInTarget" ' + 'option. Use "true" to complete the authorization in the ' + 'same window, or "false" to try to complete it in the parent ' + "or the opener window. See http://docs.smarthealthit.org/client-js/api.html");
     }
   } // If `authorize` is called, make sure we clear any previous state (in case
   // this is a re-authorize)
@@ -298,7 +306,7 @@ async function authorize(env, params = {}, _noRedirect = false) {
   } // Get oauth endpoints and add them to the state
 
 
-  const extensions = await getSecurityExtensions(env, serverUrl);
+  const extensions = await getSecurityExtensions(env, serverUrl, disableWellKnownEndpoint);
   Object.assign(state, extensions);
   await storage.set(stateKey, state); // If this happens to be an open server and there is no authorizeUri
 
@@ -481,7 +489,9 @@ async function completeAuth(env) {
         window.close();
       }
 
-      return new Promise(() => {});
+      return new Promise(() => {
+        /* leave it pending!!! */
+      });
     }
   }
 
@@ -701,7 +711,9 @@ async function init(env, options) {
     // want to return that from this promise chain because it is not a
     // Client instance. At the same time, if authorize fails, we do want to
     // pass the error to those waiting for a client instance.
-    return new Promise(() => {});
+    return new Promise(() => {
+      /* leave it pending!!! */
+    });
   });
 }
 

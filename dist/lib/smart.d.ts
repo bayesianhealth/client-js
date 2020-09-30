@@ -17,7 +17,7 @@ export declare function fetchWellKnownJson(baseUrl?: string, requestOptions?: Re
  * @param [baseUrl] Fhir server base URL
  * @param [env] The Adapter
  */
-export declare function getSecurityExtensions(env: fhirclient.Adapter, baseUrl?: string): Promise<fhirclient.OAuthSecurityExtensions>;
+export declare function getSecurityExtensions(env: fhirclient.Adapter, baseUrl?: string, disableWellKnownEndpoint?: boolean): Promise<fhirclient.OAuthSecurityExtensions>;
 /**
  * Starts the SMART Launch Sequence.
  * > **IMPORTANT**:

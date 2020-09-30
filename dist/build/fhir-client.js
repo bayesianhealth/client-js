@@ -13435,25 +13435,36 @@ function any(tasks) {
  */
 
 
-function getSecurityExtensions(env, baseUrl) {
+function getSecurityExtensions(env, baseUrl, disableWellKnownEndpoint) {
   if (baseUrl === void 0) {
     baseUrl = "/";
   }
 
+  if (disableWellKnownEndpoint === void 0) {
+    disableWellKnownEndpoint = false;
+  }
+
   var AbortController = env.getAbortController();
-  var abortController1 = new AbortController();
-  var abortController2 = new AbortController();
-  return any([{
-    controller: abortController1,
-    promise: getSecurityExtensionsFromWellKnownJson(baseUrl, {
-      signal: abortController1.signal
-    })
-  }, {
-    controller: abortController2,
+  var queries = [];
+
+  if (!disableWellKnownEndpoint) {
+    var wellKnownJSONAbortController = new AbortController();
+    queries.push({
+      controller: wellKnownJSONAbortController,
+      promise: getSecurityExtensionsFromWellKnownJson(baseUrl, {
+        signal: wellKnownJSONAbortController.signal
+      })
+    });
+  }
+
+  var conformanceStatementAbortController = new AbortController();
+  queries.push({
+    controller: conformanceStatementAbortController,
     promise: getSecurityExtensionsFromConformanceStatement(baseUrl, {
-      signal: abortController2.signal
+      signal: conformanceStatementAbortController.signal
     })
-  }]);
+  });
+  return any(queries);
 }
 
 exports.getSecurityExtensions = getSecurityExtensions;
@@ -13475,7 +13486,7 @@ function authorize(_x, _x2, _x3) {
 
 function _authorize() {
   _authorize = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(env, params, _noRedirect) {
-    var _params, redirect_uri, clientSecret, fakeTokenResponse, patientId, encounterId, client_id, target, width, height, _params2, iss, launch, fhirServiceUrl, redirectUri, _params2$scope, scope, clientId, completeInTarget, url, storage, serverUrl, inFrame, inPopUp, oldKey, stateKey, state, fullSessionStorageSupport, redirectUrl, extensions, redirectParams, win;
+    var _params, redirect_uri, clientSecret, fakeTokenResponse, patientId, encounterId, client_id, target, width, height, _params2, iss, launch, fhirServiceUrl, redirectUri, _params2$scope, scope, clientId, completeInTarget, disableWellKnownEndpoint, url, storage, serverUrl, inFrame, inPopUp, oldKey, stateKey, state, fullSessionStorageSupport, redirectUrl, extensions, redirectParams, win;
 
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
@@ -13491,7 +13502,7 @@ function _authorize() {
 
             // Obtain input
             _params = params, redirect_uri = _params.redirect_uri, clientSecret = _params.clientSecret, fakeTokenResponse = _params.fakeTokenResponse, patientId = _params.patientId, encounterId = _params.encounterId, client_id = _params.client_id, target = _params.target, width = _params.width, height = _params.height;
-            _params2 = params, iss = _params2.iss, launch = _params2.launch, fhirServiceUrl = _params2.fhirServiceUrl, redirectUri = _params2.redirectUri, _params2$scope = _params2.scope, scope = _params2$scope === void 0 ? "" : _params2$scope, clientId = _params2.clientId, completeInTarget = _params2.completeInTarget;
+            _params2 = params, iss = _params2.iss, launch = _params2.launch, fhirServiceUrl = _params2.fhirServiceUrl, redirectUri = _params2.redirectUri, _params2$scope = _params2.scope, scope = _params2$scope === void 0 ? "" : _params2$scope, clientId = _params2.clientId, completeInTarget = _params2.completeInTarget, disableWellKnownEndpoint = _params2.disableWellKnownEndpoint;
             url = env.getUrl();
             storage = env.getStorage(); // For these three an url param takes precedence over inline option
 
@@ -13544,7 +13555,7 @@ function _authorize() {
                 completeInTarget = inFrame; // In this case we can't always make the best decision so ask devs
                 // to be explicit in their configuration.
 
-                console.warn('Your app is being authorized from within an iframe or popup ' + 'window. Please be explicit and provide a "completeInTarget" ' + 'option. Use "true" to complete the authorization in the ' + 'same window, or "false" to try to complete it in the parent ' + 'or the opener window. See http://docs.smarthealthit.org/client-js/api.html');
+                console.warn("Your app is being authorized from within an iframe or popup " + 'window. Please be explicit and provide a "completeInTarget" ' + 'option. Use "true" to complete the authorization in the ' + 'same window, or "false" to try to complete it in the parent ' + "or the opener window. See http://docs.smarthealthit.org/client-js/api.html");
               }
             } // If `authorize` is called, make sure we clear any previous state (in case
             // this is a re-authorize)
@@ -13629,7 +13640,7 @@ function _authorize() {
 
           case 42:
             _context.next = 44;
-            return getSecurityExtensions(env, serverUrl);
+            return getSecurityExtensions(env, serverUrl, disableWellKnownEndpoint);
 
           case 44:
             extensions = _context.sent;
@@ -13877,7 +13888,9 @@ function _completeAuth() {
               window.close();
             }
 
-            return _context2.abrupt("return", new Promise(function () {}));
+            return _context2.abrupt("return", new Promise(function () {
+              /* leave it pending!!! */
+            }));
 
           case 29:
             url.searchParams.delete("complete"); // Do we have to remove the `code` and `state` params from the URL?
@@ -14188,7 +14201,9 @@ function _init() {
               // want to return that from this promise chain because it is not a
               // Client instance. At the same time, if authorize fails, we do want to
               // pass the error to those waiting for a client instance.
-              return new Promise(function () {});
+              return new Promise(function () {
+                /* leave it pending!!! */
+              });
             }));
 
           case 18:
