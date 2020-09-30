@@ -463,11 +463,10 @@ declare namespace fhirclient {
      */
     completeInTarget?: boolean;
 
-    /*
-          If `true`, the app will not query the `.well-known/smart-configuration`
-          endpoint for security extensions. This is helpful for some clients that
-          do not have this option though App Orchard.
-         */
+    /**
+     * If `true`, the app will not attempt to fetch the security
+     * configuration from the well known json endpoint
+     */
     disableWellKnownEndpoint?: boolean;
   }
 
