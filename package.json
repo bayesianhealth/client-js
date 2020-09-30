@@ -65,10 +65,10 @@
   "engine": "node >= 10",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smart-on-fhir/client-js.git"
+    "url": "git+https://github.com/bayesianhealth/client-js.git"
   },
   "bugs": {
-    "url": "https://github.com/smart-on-fhir/client-js/issues"
+    "url": "https://github.com/bayesianhealth/client-js/issues"
   },
   "homepage": "http://docs.smarthealthit.org/client-js/",
   "types": "src/types.d.ts"
