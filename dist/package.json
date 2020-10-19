@@ -1,6 +1,6 @@
 {
-  "name": "fhirclient",
-  "version": "2.3.8",
+  "name": "@bayesianhealth/fhirclient",
+  "version": "2.3.8-dist",
   "description": "JavaScript client for Fast Healthcare Interoperability Resources",
   "author": "SMART Health IT <support@smarthealthit.org> (https://smarthealthit.org/)",
   "contributors": [
@@ -15,6 +15,9 @@
   "license": "Apache-2.0",
   "main": "lib/entry/node.js",
   "browser": "lib/entry/browser.js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "modules.root": "lib",
   "types": "index.d.ts",
   "dependencies": {
@@ -38,10 +41,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smart-on-fhir/client-js.git"
+    "url": "git+https://github.com/bayesianhealth/client-js.git"
   },
   "bugs": {
-    "url": "https://github.com/smart-on-fhir/client-js/issues"
+    "url": "https://github.com/bayesianhealth/client-js/issues"
   },
   "homepage": "http://docs.smarthealthit.org/client-js/"
 }
